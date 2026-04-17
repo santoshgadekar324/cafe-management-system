@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block title %}Invoice #{{ order.id }} - Café Management System{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="card shadow">
+        <div class="card-body p-5">
+            <!-- Header -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h2 class="mb-3"><i class="fas fa-coffee"></i> Café Delight</h2>
+                    <p class="mb-1">Near KT patil college, Cafe Delight</p>
+                    <p class="mb-1">Phone: +91 8483879421</p>
+                    <p class="mb-1">Email: santoshgadekar324@gmail.com</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <h3 class="text-primary">INVOICE</h3>
+                    <p class="mb-1"><strong>Invoice #:</strong> {{ order.id }}</p>
+                    <p class="mb-1"><strong>Date:</strong> {{ order.order_date.strftime('%Y-%m-%d %H:%M') }}</p>
+                    <p class="mb-1">
+                        <strong>Status:</strong> 
+                        <span class="badge bg-{{ 'success' if order.status == 'completed' else 'warning' }}">
+                            {{ order.status|title }}
+                        </span>
+                    </p>
+                </div>
+            </div>
+
+            <hr>
+
+            <!-- Customer Info -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h5>Bill To:</h5>
+                    <p class="mb-1"><strong>{{ order.customer_name }}</strong></p>
+                    <p class="mb-1">{{ order.email }}</p>
+                    <p class="mb-1">{{ order.phone }}</p>
+                </div>
+                <div class="col-md-6">
+                    <h5>Order Details:</h5>
+                    <p class="mb-1"><strong>Order Type:</strong> {{ order.order_type|title }}</p>
+                    {% if order.table_number %}
+                    <p class="mb-1"><strong>Table Number:</strong> {{ order.table_number }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Order Items -->
+            <div class="table-responsive mb-4">
+                <table class="table table-bordered">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Item</th>
+                            <th class="text-center">Quantity</th>
+                            <th class="text-end">Price</th>
+                            <th class="text-end">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in order_items %}
+                        <tr>
+                            <td>{{ item.item_name }}</td>
+                            <td class="text-center">{{ item.quantity }}</td>
+                            <td class="text-end">₹{{ item.price|round(2) }}</td>
+                            <td class="text-end">₹{{ item.subtotal|round(2) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Totals -->
+            <div class="row">
+                <div class="col-md-6"></div>
+                <div class="col-md-6">
+                    <table class="table">
+                        <tr>
+                            <td><strong>Subtotal:</strong></td>
+                            <td class="text-end">₹{{ order.total_price|round(2) }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Tax (5%):</strong></td>
+                            <td class="text-end">₹{{ order.tax|round(2) }}</td>
+                        </tr>
+                        {% if order.discount > 0 %}
+                        <tr>
+                            <td><strong>Discount:</strong></td>
+                            <td class="text-end text-danger">- ₹{{ order.discount|round(2) }}</td>
+                        </tr>
+                        {% endif %}
+                        <tr class="table-primary">
+                            <td><strong>Total Amount:</strong></td>
+                            <td class="text-end"><h5 class="mb-0">₹{{ order.final_amount|round(2) }}</h5></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Payment Status:</strong></td>
+                            <td class="text-end">
+                                <span class="badge bg-{{ 'success' if order.payment_status == 'paid' else 'warning' }}">
+                                    {{ order.payment_status|title }}
+                                </span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="text-center mt-5">
+                <p class="text-muted">Thank you for dining with us!</p>
+                <div class="mt-4">
+                    <button onclick="window.print()" class="btn btn-primary me-2">
+                        <i class="fas fa-print"></i> Print Invoice
+                    </button>
+                    <a href="{{ url_for('order_history') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Orders
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+@media print {
+    .navbar, footer, .btn { display: none !important; }
+    .card { border: none !important; box-shadow: none !important; }
+}
+</style>
+{% endblock %}

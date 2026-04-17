@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block title %}Book a Table - Café Management System{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-6 mb-4">
+            <h2 class="mb-4"><i class="fas fa-calendar-alt"></i> Book a Table</h2>
+            <div class="card shadow">
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('booking') }}">
+                        <div class="mb-3">
+                            <label for="booking_date" class="form-label">Date</label>
+                            <input type="date" class="form-control" id="booking_date" name="booking_date" 
+                                   min="{{ now.strftime('%Y-%m-%d') }}" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="booking_time" class="form-label">Time</label>
+                            <input type="time" class="form-control" id="booking_time" name="booking_time" 
+                                   min="10:00" max="22:00" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="persons" class="form-label">Number of Persons</label>
+                            <select class="form-select" id="persons" name="persons" required>
+                                <option value="">Select...</option>
+                                <option value="1">1 Person</option>
+                                <option value="2">2 Persons</option>
+                                <option value="3">3 Persons</option>
+                                <option value="4">4 Persons</option>
+                                <option value="5">5 Persons</option>
+                                <option value="6">6 Persons</option>
+                                <option value="7">7 Persons</option>
+                                <option value="8">8+ Persons</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="special_request" class="form-label">Special Requests (Optional)</label>
+                            <textarea class="form-control" id="special_request" name="special_request" 
+                                      rows="3" placeholder="Any special requirements..."></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-check-circle"></i> Confirm Booking
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-6">
+            <h2 class="mb-4">Available Tables</h2>
+            <div class="row">
+                {% for table in tables %}
+                <div class="col-md-6 mb-3">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <i class="fas fa-chair fa-3x text-primary mb-3"></i>
+                            <h5>Table {{ table.table_number }}</h5>
+                            <p class="mb-0">Capacity: {{ table.capacity }} persons</p>
+                            <span class="badge bg-success mt-2">Available</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="card bg-light mt-4">
+                <div class="card-body">
+                    <h5 class="card-title">Booking Information</h5>
+                    <ul>
+                        <li>Opening Hours: 10:00 AM - 10:00 PM</li>
+                        <li>Bookings are subject to availability</li>
+                        <li>Please arrive within 15 minutes of your booking time</li>
+                        <li>For large groups (8+ persons), please call us in advance</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Set minimum date to today
+document.addEventListener('DOMContentLoaded', function() {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('booking_date').setAttribute('min', today);
+});
+</script>
+{% endblock %}

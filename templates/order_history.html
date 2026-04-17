@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}Order History - Café Management System{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="mb-4"><i class="fas fa-history"></i> Order History</h2>
+    
+    {% if orders %}
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Order #</th>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Table</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Payment</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td>#{{ order.id }}</td>
+                    <td>{{ order.order_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                    <td>
+                        <span class="badge bg-info">{{ order.order_type|title }}</span>
+                    </td>
+                    <td>
+                        {% if order.table_number %}
+                        Table {{ order.table_number }}
+                        {% else %}
+                        N/A
+                        {% endif %}
+                    </td>
+                    <td>₹{{ order.final_amount|round(2) }}</td>
+                    <td>
+                        {% if order.status == 'pending' %}
+                        <span class="badge bg-warning">Pending</span>
+                        {% elif order.status == 'preparing' %}
+                        <span class="badge bg-info">Preparing</span>
+                        {% elif order.status == 'ready' %}
+                        <span class="badge bg-primary">Ready</span>
+                        {% elif order.status == 'completed' %}
+                        <span class="badge bg-success">Completed</span>
+                        {% else %}
+                        <span class="badge bg-danger">Cancelled</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if order.payment_status == 'paid' %}
+                        <span class="badge bg-success">Paid</span>
+                        {% else %}
+                        <span class="badge bg-warning">Pending</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{{ url_for('invoice', order_id=order.id) }}" 
+                           class="btn btn-sm btn-primary">
+                            <i class="fas fa-file-invoice"></i> Invoice
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <i class="fas fa-inbox fa-5x text-muted mb-4"></i>
+        <h3>No orders yet</h3>
+        <p class="lead">Start ordering to see your order history here.</p>
+        <a href="{{ url_for('menu') }}" class="btn btn-primary">
+            <i class="fas fa-utensils"></i> Browse Menu
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Bookings - Admin{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <h2 class="mb-4"><i class="fas fa-calendar-alt"></i> Manage Table Bookings</h2>
+
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Booking #</th>
+                            <th>Customer</th>
+                            <th>Phone</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Persons</th>
+                            <th>Table</th>
+                            <th>Status</th>
+                            <th>Special Request</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for booking in bookings %}
+                        <tr>
+                            <td>#{{ booking.id }}</td>
+                            <td>{{ booking.customer_name }}</td>
+                            <td>{{ booking.phone }}</td>
+                            <td>{{ booking.booking_date }}</td>
+                            <td>{{ booking.booking_time.strftime('%H:%M') }}</td>
+                            <td>{{ booking.persons }}</td>
+                            <td>
+                                {% if booking.table_number %}
+                                Table {{ booking.table_number }}
+                                {% else %}
+                                N/A
+                                {% endif %}
+                            </td>
+                            <td>
+                                <form method="POST" action="{{ url_for('update_booking_status', booking_id=booking.id) }}" class="d-inline">
+                                    <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+                                        <option value="pending" {% if booking.status == 'pending' %}selected{% endif %}>Pending</option>
+                                        <option value="confirmed" {% if booking.status == 'confirmed' %}selected{% endif %}>Confirmed</option>
+                                        <option value="completed" {% if booking.status == 'completed' %}selected{% endif %}>Completed</option>
+                                        <option value="cancelled" {% if booking.status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                                    </select>
+                                </form>
+                            </td>
+                            <td>
+                                {% if booking.special_request %}
+                                <small>{{ booking.special_request[:50] }}...</small>
+                                {% else %}
+                                -
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge bg-info">{{ booking.created_at.strftime('%Y-%m-%d') }}</span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
